@@ -10,6 +10,7 @@ export interface FetchEventSourceInit extends RequestInit {
      * The request headers. FetchEventSource only supports the Record<string,string> format.
      */
     headers?: Record<string, string>,
+    getHeaders?: (() => Record<string, string>),
 
     /**
      * Called when a response is received. Use this to validate that the response
@@ -56,6 +57,7 @@ export interface FetchEventSourceInit extends RequestInit {
 export function fetchEventSource(input: RequestInfo, {
     signal: inputSignal,
     headers: inputHeaders,
+    getHeaders: inputGetHeaders,
     onopen: inputOnOpen,
     onmessage,
     onclose,
@@ -66,10 +68,7 @@ export function fetchEventSource(input: RequestInfo, {
 }: FetchEventSourceInit) {
     return new Promise<void>((resolve, reject) => {
         // make a copy of the input headers since we may modify it below:
-        const headers = { ...inputHeaders };
-        if (!headers.accept) {
-            headers.accept = EventStreamContentType;
-        }
+        const getHeaders = inputGetHeaders ?? (() => ({...inputHeaders}));
 
         let curRequestController: AbortController;
         function onVisibilityChange() {
@@ -102,6 +101,11 @@ export function fetchEventSource(input: RequestInfo, {
         async function create() {
             curRequestController = new AbortController();
             try {
+                const headers = getHeaders();
+                if (!headers.accept) {
+                    headers.accept = EventStreamContentType;
+                }
+
                 const response = await fetch(input, {
                     ...rest,
                     headers,

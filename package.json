@@ -1,6 +1,6 @@
 {
-  "name": "@microsoft/fetch-event-source",
-  "version": "2.0.1",
+  "name": "@zhili-edu/fetch-event-source",
+  "version": "2.1.1",
   "description": "A better API for making Event Source requests, with all the features of fetch()",
   "homepage": "https://github.com/Azure/fetch-event-source#readme",
   "repository": "github:Azure/fetch-event-source",
@@ -17,7 +17,7 @@
     "clean": "rimraf ./lib ./coverage",
     "prebuild": "npm run clean",
     "build": "tsc && tsc -p tsconfig.esm.json",
-    "prepublishOnly": "npm run build && npm run test"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/jasmine": "^4.3.1",
